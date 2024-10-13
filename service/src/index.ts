@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
 import { BaseAPIClient } from "./shared/utils/total-api-client";
+import { OrderConfirmedListener } from "./events/listener/order-confirmed-listener";
+import { OrderCreatedListener } from "./events/listener/order-created-listener";
+import { OrderPaymentMethodUpdatedListener } from "./events/listener/order-payment-method-updated-listener";
 
 const start = async () => {
   if (!process.env.PORT) {
@@ -65,6 +68,10 @@ const start = async () => {
     process.on("SIGINT", () => natsWrapper.client.close());
     process.on("SIGTERM", () => natsWrapper.client.close());
 
+    new OrderConfirmedListener(natsWrapper.client).listen();
+    new OrderCreatedListener(natsWrapper.client).listen();
+    new OrderPaymentMethodUpdatedListener(natsWrapper.client).listen();
+
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to DB");
 
@@ -78,7 +85,6 @@ const start = async () => {
         console.error("Error initializing token at startup:", error);
       }
     })();
-
   } catch (err) {
     console.error(err);
   }
