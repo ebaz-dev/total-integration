@@ -4,17 +4,15 @@ import { Product } from "@ebazdev/product";
 import { StatusCodes } from "http-status-codes";
 import { natsWrapper } from "../nats-wrapper";
 import { BaseAPIClient } from "../shared/utils/total-api-client";
-import { TotalNewProductPublisher } from "../events/publisher/total-product-recieved-publisher"
+import { TotalNewProductPublisher } from "../events/publisher/total-product-recieved-publisher";
 
 const router = express.Router();
 const totalClient = new BaseAPIClient();
-const totalCustomerId = process.env.TOTAL_CUSTOMER_ID
+const totalCustomerId = process.env.TOTAL_CUSTOMER_ID;
 
 router.get("/product-list", async (req: Request, res: Response) => {
   try {
-    const totalCompanies = [
-      "TotalDistribution"
-    ]
+    const totalCompanies = ["TotalDistribution"];
 
     const productsResponse = await totalClient.post(
       "/api/ebazaar/getdataproductinfo",

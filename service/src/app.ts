@@ -4,7 +4,8 @@ import { json } from "body-parser";
 import { errorHandler, NotFoundError, currentUser } from "@ebazdev/core";
 import { healthRouter } from "./routes/health";
 import { totalProductListRouter } from "./routes/total-product-list";
-import { totalPromoListRouter } from "./routes/total-promo-list"
+import { totalPromoListRouter } from "./routes/total-promo-list";
+import { totalMerchantProductsRouter } from "./routes/total-merchant-products";
 import cookieSession from "cookie-session";
 import dotenv from "dotenv";
 
@@ -24,7 +25,8 @@ app.use(
 
 app.use(apiPrefix, healthRouter);
 app.use(apiPrefix, totalProductListRouter);
-app.use(apiPrefix, totalPromoListRouter)
+app.use(apiPrefix, totalPromoListRouter);
+app.use(apiPrefix, totalMerchantProductsRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();
