@@ -107,7 +107,7 @@ router.get("/merchant/product-list", async (req: Request, res: Response) => {
           natsWrapper.client
         ).publish({
           merchantId: merchant.id,
-          customerId: new Types.ObjectId(process.env.COLA_CUSTOMER_ID),
+          customerId: new Types.ObjectId(totalCustomerId),
           activeList: productsToActivate,
           inActiveList: productsToDeactivate,
         });
