@@ -180,7 +180,7 @@ router.get("/product-list", async (req: Request, res: Response) => {
           await new TotalProductUpdatedEventPublisher(
             natsWrapper.client
           ).publish({
-            productId: product.productid,
+            productId: existingProduct._id.toString(),
             updatedFields,
           });
         }
