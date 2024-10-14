@@ -22,14 +22,14 @@ router.get("/profile-data", async (req: Request, res: Response) => {
     }
 
     if (!merchant.tradeShops){
-      throw new BadRequestError("cola merchant not registered")
+      throw new BadRequestError("Total merchant not registered")
     }
 
     const integrationData = merchant.tradeShops
     const totalId = integrationData.find((item) => item.holdingKey === "TD")?.tsId;
     
     if (!totalId) {
-      throw new BadRequestError("cola merchant not registered")
+      throw new BadRequestError("Total merchant not registered")
     }
 
     const profileResponse = await totalClient.post(
