@@ -6,6 +6,7 @@ import { healthRouter } from "./routes/health";
 import { totalProductListRouter } from "./routes/total-product-list";
 import { totalPromoListRouter } from "./routes/total-promo-list";
 import { totalMerchantProductsRouter } from "./routes/total-merchant-products";
+import { totalProfileRouter } from "./routes/total-get-profile"
 import cookieSession from "cookie-session";
 import dotenv from "dotenv";
 
@@ -27,6 +28,7 @@ app.use(apiPrefix, healthRouter);
 app.use(apiPrefix, totalProductListRouter);
 app.use(apiPrefix, totalPromoListRouter);
 app.use(apiPrefix, totalMerchantProductsRouter);
+app.use(apiPrefix, totalProfileRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();
