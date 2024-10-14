@@ -45,6 +45,8 @@ spec:
               value: "http://103.229.178.41:8083"
             - name: TOTAL_CUSTOMER_ID
               value: "66f12d655e36613db5743430"
+            - name: TOTAL_HOLDING_KEY
+              value: "TD"
             - name: COLA_INBOUND_USERNAME
               value: "coca-cola"
             - name: COLA_INBOUND_PASSWORD
