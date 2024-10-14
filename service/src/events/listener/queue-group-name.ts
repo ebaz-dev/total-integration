@@ -1,1 +1,1 @@
-export const queueGroupName = "cola-integration-service";
+export const queueGroupName = "total-integration-service";
