@@ -1,8 +1,8 @@
 import { Publisher } from "@ebazdev/core";
-import { TotalNewProductEvent } from "../../shared/events/total-product-recieved.event";
+import { TotalProductRecievedEvent } from "../../shared/events/total-product-recieved.event";
 import { TotalProductSubjects } from "../../shared/events/total-product-event-subjects";
 
-export class TotalNewProductPublisher extends Publisher<TotalNewProductEvent> {
-  subject: TotalProductSubjects.NewProductFound =
-    TotalProductSubjects.NewProductFound;
+export class TotalProductRecievedEventPublisher extends Publisher<TotalProductRecievedEvent> {
+  subject: TotalProductSubjects.TotalProductRecieved =
+    TotalProductSubjects.TotalProductRecieved;
 }

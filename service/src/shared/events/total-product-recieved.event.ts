@@ -1,7 +1,7 @@
 import { TotalProductSubjects } from "./total-product-event-subjects";
 
-export interface TotalNewProductEvent {
-  subject: TotalProductSubjects.NewProductFound;
+export interface TotalProductRecievedEvent {
+  subject: TotalProductSubjects.TotalProductRecieved;
   data: {
     productId: string;
     productName: string;
@@ -9,7 +9,8 @@ export interface TotalNewProductEvent {
     brandName: string;
     categoryName: string;
     packageName: string;
-    capacity: string;
+    flavorName: string;
+    capacity?: number;
     incase: number;
     barcode: string;
   };
