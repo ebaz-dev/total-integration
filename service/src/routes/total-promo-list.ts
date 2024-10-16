@@ -68,7 +68,7 @@ router.get("/promo-list", async (req: Request, res: Response) => {
         if (Object.keys(updatedFields).length > 0) {
           await new TotalPromoUpdatedPublisher(natsWrapper.client).publish({
             id: existingPromo.id.toString(),
-            ...updatedFields,
+            updatedFields,
           });
         }
       } else {
