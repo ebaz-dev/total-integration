@@ -9,7 +9,8 @@ import {
   promoTradeshops,
 } from "../shared/models/total-promo";
 import { BaseAPIClient } from "../shared/utils/total-api-client";
-import { TotalPromoPublisher } from "../events/publisher/total-promo-recieved-publisher"
+import { TotalPromoPublisher } from "../events/publisher/total-promo-recieved-publisher";
+import { TotalPromoUpdatedPublisher } from "../events/publisher/total-promo-updated-publisher";
 
 const router = express.Router();
 const totalClient = new BaseAPIClient();
@@ -51,84 +52,55 @@ router.get("/promo-list", async (req: Request, res: Response) => {
         ? matchGiftProducts.GiftProducts
         : [];
       promo.totalTradeshops = matchTradeshops ? matchTradeshops.Tradeshops : [];
-      // console.log(promo.totalProducts);
-      // console.log('***************************');
-      promo.products = await fetchEbazaarProductIds(promo.totalProducts);
-      promo.giftProducts = await fetchEbazaarProductIds(promo.totalGiftProducts);
 
-      console.log(promo.products);
-      if(promo.products.length > 0){
-        console.log(promo);
-      }
+      promo.products = await fetchEbazaarProductIds(promo.totalProducts);
+      promo.giftProducts = await fetchEbazaarProductIds(
+        promo.totalGiftProducts
+      );
 
       const existingPromo = await Promo.findOne({
-        thirdPartyPromoId: promo.promoid,
+        "thirdPartyData.thirdPartyPromoId": promo.promoid,
       });
 
-      // if (existingPromo) {
-        // const hasChanges =
-        //   existingPromo.name !== promo.promoname ||
-        //   existingPromo.startDate.getTime() !==
-        //     new Date(promo.startdate).getTime() ||
-        //   existingPromo.endDate.getTime() !==
-        //     new Date(promo.enddate).getTime() ||
-        //   existingPromo.thresholdQuantity !== promo.tresholdquantity ||
-        //   existingPromo.promoPercent !== promo.promopercent ||
-        //   existingPromo.giftQuantity !== promo.giftquantity ||
-        //   existingPromo.isActive !== promo.isactive ||
-        //   !arraysEqual(existingPromo.products, promo.products) ||
-        //   !arraysEqual(existingPromo.giftProducts, promo.giftProducts) ||
-        //   !arraysEqual(existingPromo.tradeshops, promo.totalTradeshops);
+      if (existingPromo && promo.promotypebycode) {
+        const updatedFields = getUpdatedFields(existingPromo, promo);
 
-        // if (hasChanges) {
-        //   await new TotalPromoPublisher(natsWrapper.client).publish({
-        //     id: existingPromo.id.toString(),
-        //     name: promo.promoname,
-        //     customerId: totalCustomerId,
-        //     startDate: promo.startdate,
-        //     endDate: promo.enddate,
-        //     thresholdQuantity: promo.tresholdquantity,
-        //     promoPercent: promo.promopercent,
-        //     giftQuantity: promo.giftquantity,
-        //     isActive: promo.isactive,
-        //     tradeshops: promo.totalTradeshops,
-        //     products: promo.products,
-        //     giftProducts: promo.giftProducts,
-        //     thirdPartyPromoId: promo.promoid,
-        //     thirdPartyPromoTypeId: promo.promotypeid,
-        //     thirdPartyPromoType: promo.promotype,
-        //     thirdPartyPromoTypeCode: promo.promotypebycode,
-        //     totalProducts: promo.totalProducts,
-        //     totalGiftProducts: promo.totalGiftProducts,
-        //     totalTradeshops: promo.totalTradeshops,
-        //   });
-        // }
-      // } else {
-
-        // await new TotalPromoPublisher(natsWrapper.client).publish({
-        //   name: promo.promoname,
-        //   customerId: totalCustomerId,
-        //   startDate: promo.startdate,
-        //   endDate: promo.enddate,
-        //   thresholdQuantity: promo.tresholdquantity,
-        //   promoPercent: promo.promopercent,
-        //   giftQuantity: promo.giftquantity,
-        //   isActive: promo.isactive,
-        //   tradeshops: promo.totalTradeshops,
-        //   products: promo.products,
-        //   giftProducts: promo.giftProducts,
-        //   thirdPartyPromoId: promo.promoid,
-        //   thirdPartyPromoTypeId: promo.promotypeid,
-        //   thirdPartyPromoType: promo.promotype,
-        //   thirdPartyPromoTypeCode: promo.promotypebycode,
-        //   totalProducts: promo.totalProducts,
-        //   totalGiftProducts: promo.totalGiftProducts,
-        //   totalTradeshops: promo.totalTradeshops,
-        // });
-      // }
+        if (Object.keys(updatedFields).length > 0) {
+          await new TotalPromoUpdatedPublisher(natsWrapper.client).publish({
+            id: existingPromo.id.toString(),
+            ...updatedFields,
+          });
+        }
+      } else {
+        if (
+          (promo.products.length > 0 || promo.giftProducts.length > 0) &&
+          promo.promotypebycode
+        ) {
+          await new TotalPromoPublisher(natsWrapper.client).publish({
+            name: promo.promoname,
+            customerId: totalCustomerId,
+            startDate: promo.startdate,
+            endDate: promo.enddate,
+            thresholdQuantity: promo.tresholdquantity,
+            promoPercent: promo.promopercent ?? 0,
+            giftQuantity: promo.giftquantity ?? 0,
+            isActive: promo.isactive,
+            tradeshops: promo.totalTradeshops,
+            products: promo.products,
+            giftProducts: promo.giftProducts,
+            thirdPartyPromoId: promo.promoid,
+            thirdPartyPromoTypeId: promo.promotypeid,
+            thirdPartyPromoType: promo.promotype,
+            thirdPartyPromoTypeCode: promo.promotypebycode,
+            totalProducts: promo.totalProducts,
+            totalGiftProducts: promo.totalGiftProducts,
+            totalTradeshops: promo.totalTradeshops,
+          });
+        }
+      }
     }
 
-    return res.status(StatusCodes.OK).send({ status: "promoList" });
+    return res.status(StatusCodes.OK).send({ status: "success" });
   } catch (error: any) {
     console.error("Total integration product list get error:", error);
 
@@ -150,7 +122,7 @@ const fetchEbazaarProductIds = async (
   }).select("_id thirdPartyData.productId")) as ProductDoc[];
 
   if (products.length === 0) {
-    return []
+    return [];
   }
   return products.map((product) => product._id);
 };
@@ -160,6 +132,56 @@ const arraysEqual = (arr1: any, arr2: any) => {
   return arr1.every((value: any, index: any) => {
     return value.toString() === arr2[index].toString();
   });
+};
+
+const getUpdatedFields = (existingPromo: any, promo: any) => {
+  const updatedFields: any = {};
+
+  if (existingPromo.name !== promo.promoname) {
+    updatedFields.name = promo.promoname;
+  }
+
+  if (
+    existingPromo.startDate.getTime() !== new Date(promo.startdate).getTime()
+  ) {
+    updatedFields.startDate = promo.startdate;
+  }
+
+  if (existingPromo.endDate.getTime() !== new Date(promo.enddate).getTime()) {
+    updatedFields.endDate = promo.enddate;
+  }
+
+  if (existingPromo.thresholdQuantity !== promo.tresholdquantity) {
+    updatedFields.thresholdQuantity = promo.tresholdquantity;
+  }
+
+  const promoPercent = promo.promopercent ?? 0;
+  if (existingPromo.promoPercent !== promoPercent) {
+    updatedFields.promoPercent = promoPercent;
+  }
+
+  const giftQuantity = promo.giftquantity ?? 0;
+  if (existingPromo.giftQuantity !== giftQuantity) {
+    updatedFields.giftQuantity = giftQuantity;
+  }
+
+  if (existingPromo.isActive !== (promo.isactive === 1)) {
+    updatedFields.isActive = promo.isactive === 1;
+  }
+
+  if (!arraysEqual(existingPromo.products, promo.products)) {
+    updatedFields.products = promo.products;
+  }
+
+  if (!arraysEqual(existingPromo.giftProducts, promo.giftProducts)) {
+    updatedFields.giftProducts = promo.giftProducts;
+  }
+
+  if (!arraysEqual(existingPromo.tradeshops, promo.totalTradeshops)) {
+    updatedFields.tradeshops = promo.totalTradeshops;
+  }
+
+  return updatedFields;
 };
 
 export { router as totalPromoListRouter };

@@ -5,6 +5,10 @@ import { BaseAPIClient } from "./shared/utils/total-api-client";
 import { OrderConfirmedListener } from "./events/listener/order-confirmed-listener";
 import { OrderCreatedListener } from "./events/listener/order-created-listener";
 import { OrderPaymentMethodUpdatedListener } from "./events/listener/order-payment-method-updated-listener";
+import cron from "node-cron";
+import axios from "axios";
+
+const apiPrefix = "/api/v1/integration/total";
 
 const start = async () => {
   if (!process.env.PORT) {
@@ -85,6 +89,25 @@ const start = async () => {
         console.error("Error initializing token at startup:", error);
       }
     })();
+
+    // cron.schedule(
+    //   "30 4 * * *",
+    //   async () => {
+    //     try {
+    //       console.log("Running cron job for total promo list.");
+    //       await axios.get(`http://localhost:3000${apiPrefix}/promo-list`);
+    //       console.log("Promo list job executed successfully.");
+    //     } catch (error) {
+    //       console.error(
+    //         "Error during scheduled job execution of promo list:",
+    //         error
+    //       );
+    //     }
+    //   },
+    //   {
+    //     timezone: "Asia/Ulaanbaatar",
+    //   }
+    // );
   } catch (err) {
     console.error(err);
   }

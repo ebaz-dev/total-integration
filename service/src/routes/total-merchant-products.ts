@@ -116,7 +116,7 @@ router.get("/merchant/product-list", async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).json({ message: "successful" });
   } catch (error: any) {
-    console.log(error);
+    console.log({ "Error occured at /merchant/product-list": error });
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({
       message: "Something went wrong.",
     });
