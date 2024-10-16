@@ -1,3 +1,4 @@
+import { ObjectId } from "mongoose";
 import { TotalPromoSubjects } from "./total-promo-event-subjects";
 
 export interface TotalPromoUpdatedEvent {
@@ -13,8 +14,8 @@ export interface TotalPromoUpdatedEvent {
       giftQuantity?: number;
       isActive?: boolean;
       tradeshops?: number[];
-      products?: string[];
-      giftProducts?: string[];
+      products?: ObjectId[];
+      giftProducts?: ObjectId[];
     };
   };
 }
