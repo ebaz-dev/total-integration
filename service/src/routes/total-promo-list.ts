@@ -102,10 +102,10 @@ router.get("/promo-list", async (req: Request, res: Response) => {
 
     return res.status(StatusCodes.OK).send({ status: "success" });
   } catch (error: any) {
-    console.error("Total integration product list get error:", error);
+    console.error("Total integration promo list get error:", error);
 
     return res.status(StatusCodes.BAD_REQUEST).send({
-      satus: "failure",
+      status: "failure",
     });
   }
 });
@@ -128,7 +128,14 @@ const fetchEbazaarProductIds = async (
 };
 
 const arraysEqual = (arr1: any, arr2: any) => {
-  if (arr1.length !== arr2.length) return false;
+  if (!Array.isArray(arr1) || !Array.isArray(arr2)) {
+    return false;
+  }
+
+  if (arr1.length !== arr2.length) {
+    return false;
+  }
+  
   return arr1.every((value: any, index: any) => {
     return value.toString() === arr2[index].toString();
   });
