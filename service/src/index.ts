@@ -90,24 +90,24 @@ const start = async () => {
       }
     })();
 
-    // cron.schedule(
-    //   "30 4 * * *",
-    //   async () => {
-    //     try {
-    //       console.log("Running cron job for total promo list.");
-    //       await axios.get(`http://localhost:3000${apiPrefix}/promo-list`);
-    //       console.log("Promo list job executed successfully.");
-    //     } catch (error) {
-    //       console.error(
-    //         "Error during scheduled job execution of promo list:",
-    //         error
-    //       );
-    //     }
-    //   },
-    //   {
-    //     timezone: "Asia/Ulaanbaatar",
-    //   }
-    // );
+    cron.schedule(
+      "30 4 * * *",
+      async () => {
+        try {
+          console.log("Running cron job for total promo list.");
+          await axios.get(`http://localhost:3000${apiPrefix}/promo-list`);
+          console.log("Promo list job executed successfully.");
+        } catch (error) {
+          console.error(
+            "Error during scheduled job execution of promo list:",
+            error
+          );
+        }
+      },
+      {
+        timezone: "Asia/Ulaanbaatar",
+      }
+    );
   } catch (err) {
     console.error(err);
   }
