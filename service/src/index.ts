@@ -5,6 +5,7 @@ import { BaseAPIClient } from "./shared/utils/total-api-client";
 import { OrderConfirmedListener } from "./events/listener/order-confirmed-listener";
 import { OrderCreatedListener } from "./events/listener/order-created-listener";
 import { OrderPaymentMethodUpdatedListener } from "./events/listener/order-payment-method-updated-listener";
+import { MerchantCodeRegisteredListener } from "./events/listener/merchant-registered-listener";
 import cron from "node-cron";
 import axios from "axios";
 
@@ -75,6 +76,7 @@ const start = async () => {
     new OrderConfirmedListener(natsWrapper.client).listen();
     new OrderCreatedListener(natsWrapper.client).listen();
     new OrderPaymentMethodUpdatedListener(natsWrapper.client).listen();
+    new MerchantCodeRegisteredListener(natsWrapper.client).listen();
 
     await mongoose.connect(process.env.MONGO_URI);
     console.log("Connected to DB");
