@@ -93,7 +93,29 @@ const start = async () => {
     })();
 
     cron.schedule(
-      "30 4 * * *",
+      "* * * * *",
+      async () => {
+        try {
+          console.log('**************************************');
+          console.log("Running the cron job of merchant products.");
+          await axios.get(
+            `http://localhost:3000${apiPrefix}/merchant/product-list`
+          );
+          console.log("Merchant product list job executed successfully.");
+        } catch (error) {
+          console.error(
+            "Error during scheduled job execution of merchant products:",
+            error
+          );
+        }
+      },
+      {
+        timezone: "Asia/Ulaanbaatar",
+      }
+    );
+
+    cron.schedule(
+      "30 6 * * *",
       async () => {
         try {
           console.log("Running cron job for total promo list.");
