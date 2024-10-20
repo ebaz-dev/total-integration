@@ -93,7 +93,7 @@ const start = async () => {
     })();
 
     cron.schedule(
-      "* * * * *",
+      "0 6 * * *",
       async () => {
         try {
           console.log('**************************************');
