@@ -8,7 +8,6 @@ export interface TotalProductUpdatedEvent {
     updatedFields: {
       productName?: string;
       brandName?: string;
-      packageName?: string;
       capacity?: string;
       incase?: number;
       barcode?: string;
