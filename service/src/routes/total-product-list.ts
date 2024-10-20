@@ -15,6 +15,8 @@ const totalClient = new BaseAPIClient();
 const totalCustomerId = process.env.TOTAL_CUSTOMER_ID;
 const TotalDistribution = ["TotalDistribution"];
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 interface ProductData {
   productid: string;
   productname: string;
@@ -121,6 +123,8 @@ router.get("/product-list", async (req: Request, res: Response) => {
           eventPayload.capacity = capacity;
         }
 
+        await delay(500);
+
         await new TotalProductRecievedEventPublisher(
           natsWrapper.client
         ).publish(eventPayload);
@@ -131,6 +135,9 @@ router.get("/product-list", async (req: Request, res: Response) => {
       for (const deactiveProductId of deactiveList) {
         const existingProduct = existingProductMap[deactiveProductId];
         if (existingProduct) {
+
+          await delay(500);
+
           await new TotalProductDeactivatedEventPublisher(
             natsWrapper.client
           ).publish({
@@ -177,6 +184,8 @@ router.get("/product-list", async (req: Request, res: Response) => {
         }
 
         if (Object.keys(updatedFields).length > 0) {
+          await delay(500);
+
           await new TotalProductUpdatedEventPublisher(
             natsWrapper.client
           ).publish({
